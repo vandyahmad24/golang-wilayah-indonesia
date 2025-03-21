@@ -19,7 +19,7 @@ Package Go untuk **import data wilayah Indonesia** (Provinsi, Kota/Kabupaten, Ke
 ## 📦 Instalasi
 Tambahkan package ini ke project kamu:
 ```bash
-go get github.com/vandyahmad24/wilayah-indonesia 
+go get github.com/vandyahmad24/golang-wilayah-indonesia
 ```
 
 ---
