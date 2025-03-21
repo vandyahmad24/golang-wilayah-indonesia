@@ -3,9 +3,10 @@ package wilayah
 import (
 	"database/sql"
 	"encoding/json"
-	"io/ioutil"
 	"log"
+	"os"
 	"path/filepath"
+	"runtime"
 )
 
 func SeedWilayah(db *sql.DB, dataPath string) {
@@ -18,12 +19,18 @@ func SeedWilayah(db *sql.DB, dataPath string) {
 
 func seedProvince(db *sql.DB, path string) {
 	log.Println("Seed Province")
-	data, err := ioutil.ReadFile(path)
+	// Akses internal data JSON di library
+	_, b, _, _ := runtime.Caller(0)
+	basePath := filepath.Dir(b)
+	file, err := os.Open(filepath.Join(basePath, "data", "provinsi.json"))
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
+	defer file.Close()
 	var provinsi []Province
-	json.Unmarshal(data, &provinsi)
+	if err := json.NewDecoder(file).Decode(&provinsi); err != nil {
+		log.Fatal(err)
+	}
 
 	for _, p := range provinsi {
 		_, err := db.Exec(`INSERT INTO provinsi (id, name, code) VALUES ($1, $2, $3) ON CONFLICT (id) DO NOTHING`, p.ID, p.Name, p.Code)
@@ -35,12 +42,17 @@ func seedProvince(db *sql.DB, path string) {
 
 func seedCity(db *sql.DB, path string) {
 	log.Println("Seed City")
-	data, err := ioutil.ReadFile(path)
+	_, b, _, _ := runtime.Caller(0)
+	basePath := filepath.Dir(b)
+	file, err := os.Open(filepath.Join(basePath, "data", "kota.json"))
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
+	defer file.Close()
 	var kota []City
-	json.Unmarshal(data, &kota)
+	if err := json.NewDecoder(file).Decode(&kota); err != nil {
+		log.Fatal(err)
+	}
 
 	for _, c := range kota {
 		_, err := db.Exec(`INSERT INTO kota (id, type, name, code, full_code, province_id) 
@@ -54,12 +66,17 @@ func seedCity(db *sql.DB, path string) {
 
 func seedDistrict(db *sql.DB, path string) {
 	log.Println("Seed District")
-	data, err := ioutil.ReadFile(path)
+	_, b, _, _ := runtime.Caller(0)
+	basePath := filepath.Dir(b)
+	file, err := os.Open(filepath.Join(basePath, "data", "kecamatan.json"))
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
+	defer file.Close()
 	var kecamatan []District
-	json.Unmarshal(data, &kecamatan)
+	if err := json.NewDecoder(file).Decode(&kecamatan); err != nil {
+		log.Fatal(err)
+	}
 
 	for _, d := range kecamatan {
 		_, err := db.Exec(`INSERT INTO kecamatan (id, name, code, full_code, city_id) 
@@ -73,14 +90,19 @@ func seedDistrict(db *sql.DB, path string) {
 
 func seedKelurahan(db *sql.DB, path string) {
 	log.Println("Seed Village")
-	data, err := ioutil.ReadFile(path)
+	_, b, _, _ := runtime.Caller(0)
+	basePath := filepath.Dir(b)
+	file, err := os.Open(filepath.Join(basePath, "data", "kelurahan.json"))
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-	var kecamatan []Village
-	json.Unmarshal(data, &kecamatan)
+	defer file.Close()
+	var kelurahan []Village
+	if err := json.NewDecoder(file).Decode(&kelurahan); err != nil {
+		log.Fatal(err)
+	}
 
-	for _, v := range kecamatan {
+	for _, v := range kelurahan {
 		_, err := db.Exec(`INSERT INTO kelurahan (id, name, code, full_code, pos_code, kecamatan_id) 
 			VALUES ($1, $2, $3, $4, $5, $6) 
 			ON CONFLICT (id) DO NOTHING`, v.ID, v.Name, v.Code, v.FullCode, v.PosCode, v.DistrictID)
