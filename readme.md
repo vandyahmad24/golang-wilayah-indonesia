@@ -74,7 +74,6 @@ wilayah.RunMigration(db)
 ---
 
 ### 4️⃣ Seed data dari JSON ke database
-Pastikan folder `data/` berisi `province.json`, `city.json`, dan `district.json`
 ```go
 wilayah.Seed(db, "data")
 ```
