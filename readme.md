@@ -1,6 +1,3 @@
-✅ Siap, berikut **README.md** versi clean dan sudah **menggunakan `go get`** untuk instalasi package:
-
----
 
 # 🇮🇩 golang-wilayah-indonesia
 
