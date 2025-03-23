@@ -27,13 +27,13 @@ func seedProvince(db *sql.DB, path string) {
 		log.Fatal(err)
 	}
 	defer file.Close()
-	var provinsi []Province
-	if err := json.NewDecoder(file).Decode(&provinsi); err != nil {
+	var provinces []Province
+	if err := json.NewDecoder(file).Decode(&provinces); err != nil {
 		log.Fatal(err)
 	}
 
-	for _, p := range provinsi {
-		_, err := db.Exec(`INSERT INTO provinsi (id, name, code) VALUES ($1, $2, $3) ON CONFLICT (id) DO NOTHING`, p.ID, p.Name, p.Code)
+	for _, p := range provinces {
+		_, err := db.Exec(`INSERT INTO provinces (id, name, code) VALUES ($1, $2, $3) ON CONFLICT (id) DO NOTHING`, p.ID, p.Name, p.Code)
 		if err != nil {
 			log.Println("Province Error:", err)
 		}
@@ -55,7 +55,7 @@ func seedCity(db *sql.DB, path string) {
 	}
 
 	for _, c := range kota {
-		_, err := db.Exec(`INSERT INTO kota (id, type, name, code, full_code, province_id) 
+		_, err := db.Exec(`INSERT INTO cities (id, type, name, code, full_code, province_id) 
 			VALUES ($1, $2, $3, $4, $5, $6) 
 			ON CONFLICT (id) DO NOTHING`, c.ID, c.Type, c.Name, c.Code, c.FullCode, c.ProvinceID)
 		if err != nil {
@@ -79,7 +79,7 @@ func seedDistrict(db *sql.DB, path string) {
 	}
 
 	for _, d := range kecamatan {
-		_, err := db.Exec(`INSERT INTO kecamatan (id, name, code, full_code, city_id) 
+		_, err := db.Exec(`INSERT INTO districts (id, name, code, full_code, city_id) 
 			VALUES ($1, $2, $3, $4, $5) 
 			ON CONFLICT (id) DO NOTHING`, d.ID, d.Name, d.Code, d.FullCode, d.CityID)
 		if err != nil {
@@ -103,7 +103,7 @@ func seedKelurahan(db *sql.DB, path string) {
 	}
 
 	for _, v := range kelurahan {
-		_, err := db.Exec(`INSERT INTO kelurahan (id, name, code, full_code, pos_code, kecamatan_id) 
+		_, err := db.Exec(`INSERT INTO villages (id, name, code, full_code, pos_code, district_id) 
 			VALUES ($1, $2, $3, $4, $5, $6) 
 			ON CONFLICT (id) DO NOTHING`, v.ID, v.Name, v.Code, v.FullCode, v.PosCode, v.DistrictID)
 		if err != nil {
